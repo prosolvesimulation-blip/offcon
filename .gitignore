@@ -51,6 +51,7 @@ app.log
 
 # Streamlit
 .streamlit/
+!.streamlit/config.toml
 
 # Cache
 .cache/
