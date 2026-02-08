@@ -235,6 +235,14 @@ class Database:
         equipamentos = cursor.fetchall()
         conn.close()
         return equipamentos
+    
+    def deletar_equipamento(self, serial):
+        """Deleta um equipamento pelo serial"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM equipamentos WHERE serial = ?', (serial,))
+        conn.commit()
+        conn.close()
 
     def popular_equipamentos_aleatorios(self, quantidade=20):
         """Popula o banco com dados aleatórios para equipamentos"""

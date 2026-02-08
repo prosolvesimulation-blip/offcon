@@ -149,6 +149,44 @@ def render():
                 filters['Status'] = filtro_status
 
             df_filtrada = filter_dataframe(df_equipamentos, filters)
+            
+            # Adicionar coluna de ações
+            if not df_filtrada.empty:
+                st.markdown("**Tabela de Equipamentos com Ações:**")
+                
+                # Mostrar tabela com botões de deletar
+                for index, row in df_filtrada.iterrows():
+                    col1, col2, col3, col4, col5, col6, col7 = st.columns([2, 2, 2, 2, 2, 1, 1])
+                    
+                    with col1:
+                        st.write(row['Serial'])
+                    with col2:
+                        st.write(row['Modelo'])
+                    with col3:
+                        st.write(row['Fabricante'])
+                    with col4:
+                        st.write(row['Categoria'])
+                    with col5:
+                        st.write(row['Instalação'])
+                    with col6:
+                        st.write(row['Status'])
+                    with col7:
+                        if st.button("🗑️", key=f"delete_{row['Serial']}", help="Deletar Equipamento"):
+                            if st.session_state.get(f'confirm_delete_{row["Serial"]}', False):
+                                try:
+                                    db.deletar_equipamento(row['Serial'])
+                                    show_success_message(f"Equipamento '{row['Serial']}' deletado com sucesso!")
+                                    st.rerun()
+                                except Exception as e:
+                                    show_error_message(f"Erro ao deletar equipamento: {e}")
+                            else:
+                                st.session_state[f'confirm_delete_{row["Serial"]}'] = True
+                                show_warning_message(f"Clique novamente para confirmar a exclusão do equipamento '{row['Serial']}'")
+                                st.rerun()
+                
+                st.markdown("---")
+                st.markdown("**Tabela Completa (para visualização):**")
+            
             st.dataframe(df_filtrada, width='stretch')
 
             # Botão para popular dados aleatórios
